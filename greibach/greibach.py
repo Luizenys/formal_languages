@@ -60,11 +60,62 @@ def left_recursion_elimination(v, p_0):
             p[a_r].append(rhs_copy)
     return p
 
-def begin_with_terminal(p):
-    pass
+def begin_with_terminal(v, p):
+    index = 0
+    while not v[index].endswith("_rr"): index = index + 1
+    #list1: lista com as variáveis iniciais
+    list1 = v[:index]
+    #list2: lista com as variáveis auxiliarws
+    list2 = v[index:]
 
-def terminal_followed_by_word_of_variables(p):
-    pass
+    for Ar in reversed(list1[:-1]):
+        As = list1[list1.index(Ar) + 1]
+        Ar_prod = p[Ar].copy()
+        for prod in Ar_prod:
+            if prod[0] == As:
+                for b in p[As]:
+                    b_copy = b.copy()
+                    b_copy.extend(prod[1:])
+                    p[Ar].append(b_copy)
+
+                p[Ar].remove(prod)
+
+    for a in list2:
+        Ar_prod = p[a].copy()
+        for prod in Ar_prod:
+            if prod[0] in list1:
+                for b in p[prod[0]]:
+                    b_copy = b.copy()
+                    b_copy.extend(prod[1:])
+                    p[a].append(b_copy)
+
+                p[a].remove(prod)
+
+    return p
+
+def terminal_followed_by_word_of_variables(v, p):
+    p2 = {}
+    for Ar in v:
+        Ar_prod = p[Ar].copy()
+        for prod in Ar_prod:
+            #Percorre o segundo item da lista de produções até o último
+            for i in range(1, len(prod)):
+                if prod[i] not in v:
+                    v2 = None
+                    for j, j_list in p2.items():
+                        if prod[i] in j_list:
+                            v2 = j
+
+                    if not v2:
+                        v2 = "X_" + str(len(p2) + 1)
+                        p2[v2] = [prod[i]]
+
+                    prod[i] = v2
+            p[Ar] = Ar_prod
+    #As produções recebem as variáveis atualizadas
+    p.update(p2)
+
+    return p
 
 def print_prod(p):
     for key in p.keys():
@@ -97,10 +148,10 @@ def mk_example(ex_num, v_0, p_0):
         p_i = left_recursion_elimination(v, p_i)
         print_prod(p_i)
         print(colored("Each production begining with a terminal.", 'grey'))
-        p_i = begin_with_terminal(p_i)
+        p_i = begin_with_terminal(v, p_i)
         pp.pprint("TO DO!")    
         print(colored("Each production begining with a terminal followed by a word of variables.", 'grey'))
-        p_i = terminal_followed_by_word_of_variables(p_i)
+        p_i = terminal_followed_by_word_of_variables(v, p_i)
         pp.pprint("TO DO!")
     
 if __name__ == "__main__":
