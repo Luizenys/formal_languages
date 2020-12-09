@@ -134,7 +134,7 @@ if __name__ == "__main__":
     F = {"qf"}
     V = {"B"}
     delta1 = { "q0" : [("a", "epsilon", "B", "q0"), ("b", "B", "epsilon", "q1"), ("?", "?", "epsilon", "qf")],
-               "q1" : [("b", "B", "epsilon", "q1"), ("?", "?", "epsilon", "qf")] }
+               "q1" : [("b", "B", "epsilon", "q1"), ("?", "?", "epsilon", "qf")]}
     w = "aabb"
     pp.pprint(lifted_delta_clos([(w, "q0",[])], delta1))
     print()
@@ -151,4 +151,6 @@ if __name__ == "__main__":
     M = (Sigma, Q, delta1, q0, F, V)
     w = "abba"
     pp.pprint(lifted_delta_clos([(w, "q0", [])], delta1))
+
+
     
